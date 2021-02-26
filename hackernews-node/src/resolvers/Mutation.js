@@ -1,14 +1,20 @@
-const { bcrypt } = require("apollo-server");
+const bcrypt = require("bcryptjs");
 const jwt = require(`jsonwebtoken`)
-const { APP_SECRET, getUserId} = require('../utils')
+const  { APP_SECRET, getUserId} = require('../utils')
+
+console.log(bcrypt)
 
 async function signup (parent, args, context, info){
-    const password = await bcrypt.hash(args.password, 10)
-    const user = await context.prisma.user.create({data:{...args, password}})
-    const token = jwt.sign({userId: user.id}, APP_SECRET)
-    return {
-        token,
-        user,
+    try{
+        const password = await bcrypt.hash(args.password, 10)
+        const user = await context.prisma.user.create({data:{...args, password}})
+        const token = jwt.sign({userId: user.id}, APP_SECRET)
+        return {
+            token,
+            user,
+        }
+    } catch (err){
+        console.log(err)
     }
 }
 
@@ -33,11 +39,12 @@ async function login (parent, args, context, info){
 
 async function post(parent, args, context, info){
     const { userId } = context;
+
     return await context.prisma.link.create({
         data:{
             url:args.url,
             description: args.description,
-            postedBy: {connect: {id:userId}},
+            postedById: userId,
         }
     })
 }
@@ -47,3 +54,10 @@ module.exports={
     login,
     post
 }
+
+server
+fs.readDir()
+fs.readDir()
+fs.readDir()
+fs.readDir()
+fs.readDir()

@@ -8,16 +8,16 @@ const Mutation = require(`./resolvers/Mutation`)
 const User = require(`./resolvers/User`)
 const Link = require(`./resolvers/Link`)
 const {getUserId} = require(`./utils`)
+const { PubSub} = require(`apollo-server`)
+const pubsub = new PubSub()
 
 const resolvers = {
-    Query: {
-        info: (parent, args, context)=> `The server is up`,
         Query,
         Mutation,
         User,
         Link
-    },
-};
+    
+}
 
 
 
@@ -28,19 +28,22 @@ const server = new ApolloServer({
         ),
         resolvers, 
         context: ({ req }) => {  
-        return {
+            console.log("context is ", req.headers.authorization)
+        const result = {
             ...req,
             prisma,
+            pubsub,
             userId:
                 req && req.headers.authorization
                 ? getUserId(req)
-                :null
+                : null
         };
+        return result;
     }
 });
 
 server
-    .listen()
+    .listen(4001)
     .then (({url}) => 
-    console.log(`Server is running on ${url}`)
-    );
+    console.log(`Server is running`)
+    )
