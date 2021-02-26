@@ -3,14 +3,27 @@ type Query {
         feed: [Link!]!
     }
 
-    type Mutation {
+type Mutation {
         post(url: String!, description: String!): Link!
+        signup(email: String!, password: String!, name: String!):AuthPayLoad
+        login(email:String!, password:String!):AuthPayLoad
     }
 
-    type Link {
+type AuthPayLoad{
+    token: String
+    user: User
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    links: [Link!]!
+}
+
+type Link {
         id: ID!
-        funnyID: ID!
         description: String!
         url: String!
-        similarLinks: [Link!]!
+        postedBy: User
     }
