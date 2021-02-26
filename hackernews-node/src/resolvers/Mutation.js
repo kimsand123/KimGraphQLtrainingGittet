@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require(`jsonwebtoken`)
-const  { APP_SECRET, getUserId} = require('../utils')
+const  { APP_SECRET, getUserId} = require('../utils');
+const { newLink } = require("./Subscription");
 
 console.log(bcrypt)
 
@@ -44,9 +45,11 @@ async function post(parent, args, context, info){
         data:{
             url:args.url,
             description: args.description,
-            postedById: userId,
+            postedBy: {connect: { id:userId}},
         }
     })
+    context.pubsub.publish("NEW_LINK", newLink)
+    return newLink
 }
 
 module.exports={
@@ -54,10 +57,3 @@ module.exports={
     login,
     post
 }
-
-server
-fs.readDir()
-fs.readDir()
-fs.readDir()
-fs.readDir()
-fs.readDir()

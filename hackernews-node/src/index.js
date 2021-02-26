@@ -10,16 +10,16 @@ const Link = require(`./resolvers/Link`)
 const {getUserId} = require(`./utils`)
 const { PubSub} = require(`apollo-server`)
 const pubsub = new PubSub()
+const Subscription = require (`./resolvers/Subscription`)
 
 const resolvers = {
         Query,
         Mutation,
+        Subscription,
         User,
         Link
     
 }
-
-
 
 const server = new ApolloServer({
     typeDefs: fs.readFileSync(
