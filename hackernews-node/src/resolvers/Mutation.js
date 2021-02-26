@@ -1,4 +1,6 @@
-const { buildSchemaFromTypeDefinitions } = require("apollo-server");
+const { bcrypt } = require("apollo-server");
+const jwt = require(`jsonwebtoken`)
+const { APP_SECRET, getUserId} = require('../utils')
 
 async function signup (parent, args, context, info){
     const password = await bcrypt.hash(args.password, 10)
@@ -29,8 +31,19 @@ async function login (parent, args, context, info){
     }
 }
 
+async function post(parent, args, context, info){
+    const { userId } = context;
+    return await context.prisma.link.create({
+        data:{
+            url:args.url,
+            description: args.description,
+            postedBy: {connect: {id:userId}},
+        }
+    })
+}
+
 module.exports={
     signup,
     login,
-    post,
+    post
 }

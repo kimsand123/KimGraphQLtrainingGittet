@@ -17,7 +17,7 @@ function getUserId(req, authToken){
             return userId;
         }
     }else if (authToken){
-        const {userId} = getTokenPayload(autoToken);
+        const {userId} = getTokenPayload(authToken);
         return userId;
     }
     throw new Error(`Not authenticated`);

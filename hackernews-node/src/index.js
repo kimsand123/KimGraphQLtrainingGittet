@@ -1,34 +1,25 @@
 const { ApolloServer } = require('apollo-server');
 const { PrismaClient } = require(`@prisma/client`)
+const prisma = new PrismaClient()
 const fs = require(`fs`);
 const path = require(`path`);
+const Query = require (`./resolvers/Query`)
+const Mutation = require(`./resolvers/Mutation`)
+const User = require(`./resolvers/User`)
+const Link = require(`./resolvers/Link`)
+const {getUserId} = require(`./utils`)
 
 const resolvers = {
     Query: {
         info: (parent, args, context)=> `The server is up`,
-        feed: async (parent, args, context) => {
-            return context.prisma.link.findMany()
-        },
-    },
-
-    
-    Mutation: {
-        post: (parent, args, context, info) => {
-            const newLink = context.prisma.link.create({
-                data:{
-                    url: args.url,
-                    description: args.description,
-                }
-            })
-            return newLink
-        },          
+        Query,
+        Mutation,
+        User,
+        Link
     },
 };
 
 
-
-const prisma = new PrismaClient()
-const {getUserId} = require(`./utils`);
 
 const server = new ApolloServer({
     typeDefs: fs.readFileSync(
@@ -36,7 +27,7 @@ const server = new ApolloServer({
         `utf8`
         ),
         resolvers, 
-        context: {( req }) => {  
+        context: ({ req }) => {  
         return {
             ...req,
             prisma,
